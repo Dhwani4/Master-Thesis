@@ -2,7 +2,6 @@
 """
 Created on Wed Jul 31 10:30:12 2019
 
-@author: Dhwani
 """
 
 """
@@ -303,48 +302,29 @@ def policy_iteration(r, P, g = 0.9):
     action = [P[-1,-1],P[-1,0],P[-1,1],P[0,-1],P[0,0],P[0,-1],P[1,-1],P[1,0],P[1,1]]
     
     Y = I - ( g * P[-1,-1])
-    #print(P[-1,-1])
-    #print(Y)
-    #print(P[-1,-1].getrow(0))
-#    x2 =[]
-#    x2 = P[-1,-1][:4,:]
-#    print(x2)
-#    print(x2[3])
     U = spsolve(Y,r)
     p = np.array([P[a].dot(U) for a in P]).argmax(axis=0)
    
     while is_value_changed:
         is_value_changed = False
-        iterations += 1        
-        #print("*")
-        #p = np.array([P[a].dot(U) for a in P]).argmax(axis=0)
+        iterations += 1       
        
-        #print(p)
         A =[]
         B=[]
-        #print(action[0][:10,:])
         for s in range(num_states):
-            #print(s)
             a =p[s]
-            #print(a)
-            #print(action[a])
             B=action[a][s,:]
-            #print(B)
-            #print(B.shape)
             A.append(B)
         
         O_P=vstack(A)    
             
-        print("im")   
+        
             
         Y1= I - (g*O_P)
         U_new = spsolve(Y1,r)
-        print(U_new)
-        print(U)
         if (np.all(U==U_new)):
             print("Yes")
-#        Y1 = I - (g * P_u.max(axis=0))
-#        U_new = spsolve(Y1,r)
+        print("Different Utility",np.sum(U!=U_new))
         p_new= np.array([P[a].dot(U_new) for a in P]).argmax(axis=0)
         print("Differen Actions:",np.sum(p!=p_new))
         if (np.all(p== p_new)):
@@ -354,7 +334,6 @@ def policy_iteration(r, P, g = 0.9):
             U = U_new
             p = p_new
             is_value_changed = True
-            #print "State", s, "q_best", q_best
         print(iterations)
     print("Final policy")
     print(p)
@@ -412,8 +391,8 @@ if __name__ == "__main__":
 
     # Do value iteration to get optimal mother policy
     #u = value_iteration(r, P, g = 0.95, target_error=0, num_iters=50)
-    u = policy_iteration(r, P, g = 0.9)
-    p = build_policy(P, u)
+    p = policy_iteration(r, P, g = 0.9)
+    #p = build_policy(P, u)
 
     # Run a simulation with optimal policy to check that it works well
     # Initial state
