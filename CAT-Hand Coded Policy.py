@@ -1,10 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Aug  8 15:08:48 2019
 
+@author: Dhwani
+"""
 import numpy as np
+import heapq
 import matplotlib.pyplot as pt
 grid_cols = 6 # size of grid world
 grid_rows = 6 # size of grid world
 baby_view = 1 # how far babies can see
 num_babies = 2
+num_states = (grid_cols*grid_rows)**(1+num_babies) * 2**4
 
 def food_coords(food):
     """
@@ -34,6 +41,23 @@ def plot_state(state):
     pt.xlim([-1, grid_cols])
     pt.ylim([-1, grid_rows])
     pt.grid()
+
+def index_to_state(idx):
+    """
+    This method is the inverse of "state_to_index":
+    Given an integer index, it reconstructs the corresponding state.
+    """
+    factors = [grid_cols, grid_rows]*(num_babies+1) + [2]*4
+    digits = []
+    for i in range(2*(1 + num_babies) + 4):
+        digit =int( idx % factors[i])
+        idx = int((idx - digit) / factors[i])
+        digits.append(digit)
+    m_x, m_y = tuple(digits[:2])
+    b_x = tuple(digits[2:2+num_babies])
+    b_y = tuple(digits[2+num_babies:-4])
+    food = tuple(digits[-4:])
+    return (m_x, m_y, b_x, b_y, food)
 
 class Vertex:
     def __init__(self, node):
@@ -116,14 +140,12 @@ class Graph:
         return self.previous
 
 def shortest(v, path):
-    ''' make shortest path from v.previous'''
     if v.previous:
         path.append(v.previous.get_id())
         shortest(v.previous, path)
         
     return
 
-import heapq
 
 def dijkstra(aGraph, start, target):
     print ('''Dijkstra's shortest path''')
@@ -131,9 +153,7 @@ def dijkstra(aGraph, start, target):
     start.set_distance(0)
     unvisited_queue = [(v.get_distance(),v) for v in aGraph]
     heapq.heapify(unvisited_queue)
-    # unvisited_queue=[]
-    # for v in aGraph:
-    #     heapq.heappush(unvisited_queue, (v.get_distance(), v))
+    
 
     while len(unvisited_queue):
         # Pops a vertex with the smallest distance 
@@ -141,7 +161,7 @@ def dijkstra(aGraph, start, target):
         current = uv[1]
         current.set_visited()
 
-        #for next in v.adjacent:
+        
         for next in current.adjacent:
             # if visited, skip
             if next.visited:
@@ -151,11 +171,7 @@ def dijkstra(aGraph, start, target):
             if new_dist < next.get_distance():
                 next.set_distance(new_dist)
                 next.set_previous(current)
-#                #print ('updated : current = %s next = %s new_dist = %s' \
-#                        %(current.get_id(), next.get_id(), next.get_distance()))
-        
-#                #print ('not updated : current = %s next = %s new_dist = %s' \
-#                        %(current.get_id(), next.get_id(), next.get_distance()))
+#               
 
         # Rebuild heap
         # 1. Pop every item
@@ -192,6 +208,7 @@ def move(state):
             print("*")
             b_x_new.append(bx + np.sign(m_x-bx))
             b_y_new.append(by + np.sign(m_y-by))
+            continue
         b_x_new.append(bx)
         b_y_new.append(by)
         
@@ -204,8 +221,8 @@ def move(state):
 
 def make_graph(g):
     
-    grid_row = 6
-    grid_column = 6
+    grid_row = 5
+    grid_column = 5
     for r in range(grid_row):
         for c in range(grid_column):
             g.add_vertex((r,c))
@@ -255,7 +272,6 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                 for i in range(len(A)):
                     mx_new.append(A[i][0])
                     my_new.append(A[i][1])
-                print(mx_new,my_new)
                 for t in range(12):
                     if t < len(mx_new):
                         
@@ -282,8 +298,6 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             path = [target.get_id()]
             shortest(target, path)
             A= (path[::-1])
-            A.pop()
-            print(A)
             mx_new = []
             my_new = []
             for i in range(len(A)):
@@ -292,13 +306,54 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             print(mx_new,my_new)
             
             a = len(mx_new)
-            print(a)
+            c = a
             
             for t in range(a):
                     print(t)
-                    state = (mx_new[t],my_new[t],b_x,b_y,food)
-                    plot_state(state)
-                    pt.show()
+                    if (t < len(mx_new)):
+                        
+                        b_x_new =[]
+                        b_y_new=[]
+                        state1 = (mx_new[t],my_new[t],b_x,b_y,food)
+                        mx,my,b_x,b_y, food= state
+                        food_step = False
+                        for bx, by in zip(b_x, b_y):
+                            for fx, fy in zip(f_x, f_y):
+            
+                                if max(abs(fx-bx), abs(fy-by)) <= baby_view:
+                                    food_step = True  
+                                    b_x_new.append(bx + np.sign(fx-bx))
+                                    b_y_new.append(by + np.sign(fy-by))
+                                    break
+                            if food_step: continue
+                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
+                                print("*")
+                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
+                                b_y_new.append(by + np.sign(my_new[t]-by))
+                                continue
+                            b_x_new.append(bx)
+                            b_y_new.append(by)
+                            
+                        print(b_x_new,b_y_new)
+                        if (t < len(mx_new)-1):
+                            state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
+                            plot_state(state)
+                            pt.pause(10.)
+                        else:
+                            a = (mx_new[t])
+                            
+                            state =(mx_new[t],my_new[t],tuple(b_x_new),tuple(b_y_new),food)
+                            plot_state(state)
+                            state = move(state)
+                            pt.pause(10.)
+                            plot_state(state)
+                        
+                            pt.show()
+                    else:
+                        #if mx_new
+                        state = ()
+                        
+                        
                    # pt.pause(10.)
                 
             m_x, m_y, b_x, b_y, food = state           
@@ -308,75 +363,68 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             #for fx, fy in zip(f_x, f_y):
             f = Graph()
             make_graph(f)
-            dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((5,5))) 
-            target = f.get_vertex((5,5))
-            path1 = [target.get_id()]
-            shortest(target, path1)
-            D= (path1[::-1])
-            D.pop()
-            print(D)
-            mx_new=[]
-            my_new=[]
-            for i in range(len(D)):
-                mx_new.append(D[i][0])
-                my_new.append(D[i][1])
-            print(mx_new,my_new)
-            for t in range(12):
-                print(t)
-                
-                if (t < len(mx_new)):
+            for fx, fy in zip(f_x, f_y):
+                food1 = True
+                dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((fx,fy))) 
+                target = f.get_vertex((fx,fy))
+                path1 = [target.get_id()]
+                shortest(target, path1)
+                D= (path1[::-1])
+                mx_new=[]
+                my_new=[]
+                for i in range(len(D)):
+                    mx_new.append(D[i][0])
+                    my_new.append(D[i][1])
+                print(mx_new,my_new)
+                for t in range(12):
+                    print(t)
                     
-                    b_x_new =[]
-                    b_y_new=[]
-                    state1 = (mx_new[t],my_new[t],b_x,b_y,food)
-                    mx,my,b_x,b_y, food= state
-                    
-                    for bx, by in zip(b_x, b_y):
-                        if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                            print("*")
-                            b_x_new.append(bx + np.sign(mx_new[t]-bx))
-                            b_y_new.append(by + np.sign(my_new[t]-by))
-                    print(b_x_new)
-                    print(b_y_new)
-                    if (t < len(mx_new)-1):
-                        state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
-                        plot_state(state)
-                        pt.pause(10.)
-                    else:
-                        a = (mx_new[t]-1)
+                    if (t < len(mx_new)):
                         
-                        state =(mx_new[t]-1,my_new[t]-1,tuple(b_x_new),tuple(b_y_new),food)
-                        plot_state(state)
-                        state = move(state)
-                        pt.pause(10.)
-                        plot_state(state)
+                        b_x_new =[]
+                        b_y_new=[]
+                        state1 = (mx_new[t],my_new[t],b_x,b_y,food)
+                        mx,my,b_x,b_y, food= state
+                        
+                        for bx, by in zip(b_x, b_y):
+                            for fx, fy in zip(f_x, f_y):
+            
+                                if max(abs(fx-bx), abs(fy-by)) <= baby_view:
+                                    food_step = True  
+                                    b_x_new.append(bx + np.sign(fx-bx))
+                                    b_y_new.append(by + np.sign(fy-by))
+                                    break
+                            if food_step: continue
+                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
+                                print("*")
+                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
+                                b_y_new.append(by + np.sign(my_new[t]-by))
+                                continue
+                            b_x_new.append(bx)
+                            b_y_new.append(by)
+                        print(b_x_new)
+                        print(b_y_new)
+                        if (t < len(mx_new)-1):
+                            state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
+                            plot_state(state)
+                            pt.pause(10.)
+                        else:
+                            
+                            state =(mx_new[t],my_new[t],tuple(b_x_new),tuple(b_y_new),food)
+                            plot_state(state)
+                            state = move(state)
+                            pt.pause(10.)
+                            plot_state(state)
+                        
+                            pt.show()
+                    else:
                     
                         pt.show()
-                else:
-                    state = move(state)
-                    plot_state(state)
-                    pt.show()
-                    
-#                    for i in range(len(mx_new)):
-#                        
-#                    
-#                        for bx, by in zip(b_x_new, b_y_new):
-#                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-#                                print("*")
-#                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
-#                                b_y_new.append(by + np.sign(my_new[t]-by))
-#                        pt.pause(.10)
-#                        print(b_x_new)
-#                        print(b_y_new)
-#                        state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
-#                        plot_state(state)
-#                        pt.show()    
+                if food1: break
                         
+                        
+
                     
-            
-#		call Dijkstra’s algorithm with robot as source and subject1/subject 2 as destination
-#		call Dijkstra’s algorithm with robot as source and food as destination
-#		feed the path i.e sequence of action that robot will take per time step
     elif selfish < 0:
         
         if empathy < 0 or empathy == 0:
@@ -409,23 +457,20 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             shortest(target, path)
             A= (path[::-1])
             A.pop()
-            print(A)
             mx_new = []
             my_new = []
             for i in range(len(A)):
                 mx_new.append(A[i][0])
                 my_new.append(A[i][1])
-            print(mx_new,my_new)
             
             a = len(mx_new)
-            print(a)
             
             for t in range(a):
                     print(t)
                     state = (mx_new[t],my_new[t],b_x,b_y,food)
                     plot_state(state)
                     pt.show()
-                   # pt.pause(10.)
+                    pt.pause(10.)
                 
             m_x, m_y, b_x, b_y, food = state           
             f_x, f_y = food_coords(food)            
@@ -434,51 +479,66 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             #for fx, fy in zip(f_x, f_y):
             f = Graph()
             make_graph(f)
-            dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((5,5))) 
-            target = f.get_vertex((5,5))
-            path1 = [target.get_id()]
-            shortest(target, path1)
-            D= (path1[::-1])
-            D.pop()
-            print(D)
-            mx_new=[]
-            my_new=[]
-            for i in range(len(D)):
-                mx_new.append(D[i][0])
-                my_new.append(D[i][1])
-            print(mx_new,my_new)
-            for t in range(12):
-                print(t)
-                
-                if (t < len(mx_new)):
+            for fx, fy in zip(f_x, f_y):
+                food1 = True
+                dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((fx,fy))) 
+                target = f.get_vertex((fx,fy))
+                path1 = [target.get_id()]
+                shortest(target, path1)
+                D= (path1[::-1])
+                D.pop()
+                mx_new=[]
+                my_new=[]
+                for i in range(len(D)):
+                    mx_new.append(D[i][0])
+                    my_new.append(D[i][1])
+                for t in range(12):
+                    print(t+a)
                     
-                    b_x_new =[]
-                    b_y_new=[]
-                    state1 = (mx_new[t],my_new[t],b_x,b_y,food)
-                    mx,my,b_x,b_y, food= state
-                    
-                    for bx, by in zip(b_x, b_y):
-                        if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                            print("*")
-                            b_x_new.append(bx + np.sign(mx_new[t]-bx))
-                            b_y_new.append(by + np.sign(my_new[t]-by))
-                    print(b_x_new)
-                    print(b_y_new)
-                    if (t < len(mx_new)-1):
-                        state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
-                        plot_state(state)
-                        pt.pause(10.)
-                    else:
-                        a = (mx_new[t]-1)
+                    if (t < len(mx_new)):
                         
-                        state =(mx_new[t]-1,my_new[t]-1,tuple(b_x_new),tuple(b_y_new),food)
-                        plot_state(state)
+                        b_x_new =[]
+                        b_y_new=[]
+                        state1 = (mx_new[t],my_new[t],b_x,b_y,food)
+                        mx,my,b_x,b_y, food= state
+                        food_step = False
+                        for bx, by in zip(b_x, b_y):
+                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
+                                food_step = True
+                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
+                                b_y_new.append(by + np.sign(my_new[t]-by))
+                                
+                                break
+                            if food_step: continue
+                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
+                                print("*")
+                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
+                                b_y_new.append(by + np.sign(my_new[t]-by))
+                                continue
+                            b_x_new.append(bx)
+                            b_y_new.append(by)
+                        print(b_x_new)
+                        print(b_y_new)
+                        
+                        if (t < len(mx_new)-1):
+                            state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
+                            plot_state(state)
+                            pt.pause(10.)
+                        else:
+                            
+                            state =(mx_new[t],my_new[t],tuple(b_x_new),tuple(b_y_new),food)
+                            plot_state(state)
+                            state = move(state)
+                            pt.pause(10.)
+                            plot_state(state)
+                        
+                            pt.show()
+                    else:
                         state = move(state)
-                        pt.pause(10.)
-                        plot_state(state)
-                    
+                        
                         pt.show()
-            
+                if food1: break
+                
 #		call Dijkstra’s algorithm with robot as source and subject1/subject 2 as destination
 #		call Dijkstra’s algorithm with robot as source and food as destination
 #		feed the path i.e sequence of action that robot will take per time step
@@ -500,8 +560,105 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                 pt.pause(10.)
 #		Robot stays at the same location
         elif empathy > 0:
-            print("")
-        
+            B1 =[]
+            B2 =[]
+            for bx, by in zip(b_x, b_y):
+                B1.append(bx)
+                B2.append(by)
+            print(B1,B2)
+            g = Graph()
+            make_graph(g)
+            dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[1],B2[1]))) 
+            target = g.get_vertex((B1[1],B2[1]))
+            path = [target.get_id()]
+            shortest(target, path)
+            A= (path[::-1])
+            A.pop()
+            print(A)
+            mx_new = []
+            my_new = []
+            for i in range(len(A)):
+                mx_new.append(A[i][0])
+                my_new.append(A[i][1])
+            
+            a = len(mx_new)
+            
+            for t in range(a):
+                    print(t)
+                    state = (mx_new[t],my_new[t],b_x,b_y,food)
+                    plot_state(state)
+                    pt.show()
+                    pt.pause(10.)
+                
+            m_x, m_y, b_x, b_y, food = state           
+            f_x, f_y = food_coords(food)            
+                    
+            print(m_x,m_y) 
+            #for fx, fy in zip(f_x, f_y):
+            f = Graph()
+            make_graph(f)
+            for fx, fy in zip(f_x, f_y):
+
+                food_1 = True
+                dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((fx,fy))) 
+                target = f.get_vertex((fx,fy))
+                path1 = [target.get_id()]
+                shortest(target, path1)
+                D= (path1[::-1])
+                D.pop()
+                mx_new=[]
+                my_new=[]
+                for i in range(len(D)):
+                    mx_new.append(D[i][0])
+                    my_new.append(D[i][1])
+                for t in range(12):
+                    print(t+a)
+                    
+                    if (t < len(mx_new)):
+                        
+                        b_x_new =[]
+                        b_y_new=[]
+                        state1 = (mx_new[t],my_new[t],b_x,b_y,food)
+                        mx,my,b_x,b_y, food= state
+                        food_step = False
+                        for bx, by in zip(b_x, b_y):
+                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
+                                food_step = True
+                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
+                                b_y_new.append(by + np.sign(my_new[t]-by))
+                                
+                                break
+                            if food_step: continue
+                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
+                                print("*")
+                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
+                                b_y_new.append(by + np.sign(my_new[t]-by))
+                                continue
+                            b_x_new.append(bx)
+                            b_y_new.append(by)
+                        print(b_x_new)
+                        print(b_y_new)
+                        
+                        if (t < len(mx_new)-1):
+                            state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
+                            plot_state(state)
+                            pt.pause(10.)
+                        else:
+                            
+                            state =(mx_new[t],my_new[t],tuple(b_x_new),tuple(b_y_new),food)
+                            plot_state(state)
+                            state = move(state)
+                            pt.pause(10.)
+                            plot_state(state)
+                        
+                            pt.show()
+                    else:
+                        state = move(state)
+                        
+                        pt.show()
+                if food_1:break
+                        
+
 #		call Dijkstra’s algorithm with robot as source and subject1/subject 2 as destination
 #		call Dijkstra’s algorithm with robot as source and food as destination
 #		feed the path i.e sequence of action that robot will take per time step
@@ -525,26 +682,19 @@ if __name__ == "__main__":
 #            print( '() %s , %s, %3d)'  % ( vid, wid, v.get_weight(w)))
 
     #state = (1, 0, (0, 0), (5, 5), (False, False,True, False))
-    state = (5, 0, (0, 0), (5, 5), (False, False,True, False))
+    #state = (5, 0, (0, 0), (5, 5), (False, False,True, False))
+    #state = (0, 0, (0, 0), (5, 5), (False, False, True, False))
+    # state = (0, 0, (0, 0), (0, 0), (False, False, False, True))
+    # state = (5, 5, (5, 5), (5, 5), (True, True, True, True))
+    # state = index_to_state(np.random.randint(num_states)) # random initialstate = (0, 0, (0, 0), (5, 5), (False, False, True, False))
+    # state = (0, 0, (0, 0), (0, 0), (False, False, False, True))
+    # state = (5, 5, (5, 5), (5, 5), (True, True, True, True))
+    state = index_to_state(np.random.randint(num_states)) # random initial
     m_x, m_y, b_x, b_y, food = state
     f_x, f_y = food_coords(food)
-    B1= set()
+   
     
-    for bx, by in zip(b_x, b_y):
-        B1.add((bx,by))
-    print(B1)
-    
-        
-    print(m_x)
-    print(m_y)
-    for fx, fy in zip(f_x, f_y):
-        print("food x",fx)
-        print("food y",fy)
-    for bx, by in zip(b_x,b_y):
-        print(bx)
-        print(by)
-    
-    Hand_Coded_Policy(state,selfish =-1,empathy = 1)
+    Hand_Coded_Policy(state,selfish =0,empathy = 1)
 #    for t in range(12): # number of time-steps
 #
 #        # show current state
