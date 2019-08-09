@@ -185,7 +185,7 @@ def move(state):
     
     m_x, m_y, b_x, b_y, food = state
     f_x, f_y = food_coords(food)
-    print(m_x)
+    #print(m_x)
     b_x_new, b_y_new = [], []
     for bx, by in zip(b_x, b_y):
 
@@ -205,7 +205,7 @@ def move(state):
         
         # otherwise, if mother is in this baby's view, it steps towards mother
         if max(abs(m_x-bx), abs(m_y-by)) <= baby_view:
-            print("*")
+            #print("*")
             b_x_new.append(bx + np.sign(m_x-bx))
             b_y_new.append(by + np.sign(m_y-by))
             continue
@@ -213,8 +213,8 @@ def move(state):
         b_y_new.append(by)
         
 
-    m_x_new = max(0, min(m_x, grid_cols-1))
-    m_y_new = max(0, min(m_y, grid_rows-1))
+#    m_x_new = max(0, min(m_x, grid_cols-1))
+#    m_y_new = max(0, min(m_y, grid_rows-1))
 
     new_state = (m_x,m_y, tuple(b_x_new), tuple(b_y_new), food)
     return new_state
@@ -262,11 +262,11 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                 dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((fx,fy))) 
                 target = g.get_vertex((fx,fy))
                 path = [target.get_id()]
-                print(path)
+                #print(path)
                 shortest(target, path)
                 A=[]
                 A= (path[::-1])
-                print(A)
+                #print(A)
                 mx_new = []
                 my_new = []
                 for i in range(len(A)):
@@ -290,7 +290,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             for bx, by in zip(b_x, b_y):
                 B1.append(bx)
                 B2.append(by)
-            print(B1,B2)
+            #print(B1,B2)
             g = Graph()
             make_graph(g)
             dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[1],B2[1]))) 
@@ -303,7 +303,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             for i in range(len(A)):
                 mx_new.append(A[i][0])
                 my_new.append(A[i][1])
-            print(mx_new,my_new)
+            #print(mx_new,my_new)
             
             a = len(mx_new)
             c = a
@@ -327,14 +327,14 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                                     break
                             if food_step: continue
                             if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                print("*")
+                                #print("*")
                                 b_x_new.append(bx + np.sign(mx_new[t]-bx))
                                 b_y_new.append(by + np.sign(my_new[t]-by))
                                 continue
                             b_x_new.append(bx)
                             b_y_new.append(by)
                             
-                        print(b_x_new,b_y_new)
+                        #print(b_x_new,b_y_new)
                         if (t < len(mx_new)-1):
                             state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
                             plot_state(state)
@@ -359,7 +359,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             m_x, m_y, b_x, b_y, food = state           
             f_x, f_y = food_coords(food)            
                     
-            print(m_x,m_y) 
+            #print(m_x,m_y) 
             #for fx, fy in zip(f_x, f_y):
             f = Graph()
             make_graph(f)
@@ -375,7 +375,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                 for i in range(len(D)):
                     mx_new.append(D[i][0])
                     my_new.append(D[i][1])
-                print(mx_new,my_new)
+                #print(mx_new,my_new)
                 for t in range(12):
                     print(t)
                     
@@ -396,14 +396,14 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                                     break
                             if food_step: continue
                             if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                print("*")
+                                #print("*")
                                 b_x_new.append(bx + np.sign(mx_new[t]-bx))
                                 b_y_new.append(by + np.sign(my_new[t]-by))
                                 continue
                             b_x_new.append(bx)
                             b_y_new.append(by)
-                        print(b_x_new)
-                        print(b_y_new)
+                        #print(b_x_new)
+                        #print(b_y_new)
                         if (t < len(mx_new)-1):
                             state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
                             plot_state(state)
@@ -428,7 +428,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
     elif selfish < 0:
         
         if empathy < 0 or empathy == 0:
-            print("0")
+            #print("0")
             plot_state(state)
             pt.show()
             pt.pause(10.)
@@ -448,7 +448,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             for bx, by in zip(b_x, b_y):
                 B1.append(bx)
                 B2.append(by)
-            print(B1,B2)
+            #print(B1,B2)
             g = Graph()
             make_graph(g)
             dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[1],B2[1]))) 
@@ -475,7 +475,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             m_x, m_y, b_x, b_y, food = state           
             f_x, f_y = food_coords(food)            
                     
-            print(m_x,m_y) 
+            #print(m_x,m_y) 
             #for fx, fy in zip(f_x, f_y):
             f = Graph()
             make_graph(f)
@@ -511,14 +511,14 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                                 break
                             if food_step: continue
                             if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                print("*")
+                                #print("*")
                                 b_x_new.append(bx + np.sign(mx_new[t]-bx))
                                 b_y_new.append(by + np.sign(my_new[t]-by))
                                 continue
                             b_x_new.append(bx)
                             b_y_new.append(by)
-                        print(b_x_new)
-                        print(b_y_new)
+                        #print(b_x_new)
+                        #print(b_y_new)
                         
                         if (t < len(mx_new)-1):
                             state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
@@ -545,8 +545,8 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
 
     elif selfish == 0:
         if empathy < 0 or empathy == 0:
-            print("")
-            print("0")
+            #print("")
+            #print("0")
             plot_state(state)
             pt.show()
             pt.pause(10.)
@@ -565,7 +565,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             for bx, by in zip(b_x, b_y):
                 B1.append(bx)
                 B2.append(by)
-            print(B1,B2)
+            #print(B1,B2)
             g = Graph()
             make_graph(g)
             dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[1],B2[1]))) 
@@ -574,7 +574,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             shortest(target, path)
             A= (path[::-1])
             A.pop()
-            print(A)
+            #print(A)
             mx_new = []
             my_new = []
             for i in range(len(A)):
@@ -593,7 +593,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             m_x, m_y, b_x, b_y, food = state           
             f_x, f_y = food_coords(food)            
                     
-            print(m_x,m_y) 
+            #print(m_x,m_y) 
             #for fx, fy in zip(f_x, f_y):
             f = Graph()
             make_graph(f)
@@ -630,7 +630,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                                 break
                             if food_step: continue
                             if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                print("*")
+                                #print("*")
                                 b_x_new.append(bx + np.sign(mx_new[t]-bx))
                                 b_y_new.append(by + np.sign(my_new[t]-by))
                                 continue
@@ -681,25 +681,16 @@ if __name__ == "__main__":
 #            wid = w.get_id()
 #            print( '() %s , %s, %3d)'  % ( vid, wid, v.get_weight(w)))
 
-    #state = (1, 0, (0, 0), (5, 5), (False, False,True, False))
+    state = (1, 0, (0, 0), (5, 5), (False, False,True, False))
     #state = (5, 0, (0, 0), (5, 5), (False, False,True, False))
     #state = (0, 0, (0, 0), (5, 5), (False, False, True, False))
     # state = (0, 0, (0, 0), (0, 0), (False, False, False, True))
     # state = (5, 5, (5, 5), (5, 5), (True, True, True, True))
-    # state = index_to_state(np.random.randint(num_states)) # random initialstate = (0, 0, (0, 0), (5, 5), (False, False, True, False))
     # state = (0, 0, (0, 0), (0, 0), (False, False, False, True))
     # state = (5, 5, (5, 5), (5, 5), (True, True, True, True))
-    state = index_to_state(np.random.randint(num_states)) # random initial
+    #state = index_to_state(np.random.randint(num_states)) # random initial
     m_x, m_y, b_x, b_y, food = state
     f_x, f_y = food_coords(food)
    
-    
-    Hand_Coded_Policy(state,selfish =0,empathy = 1)
-#    for t in range(12): # number of time-steps
-#
-#        # show current state
-#        print(t)
-#        pt.cla()
-#        plot_state(state)
-#        pt.show()
-#        pt.pause(10.)
+# Var selfish and empathy value from -1 to 1
+    Hand_Coded_Policy(state,selfish =-1,empathy = 1)
