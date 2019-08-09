@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jul 31 10:30:12 2019
 
-"""
 
 """
 A small grid world with a "mother" cat and a lot of "baby" cats.
