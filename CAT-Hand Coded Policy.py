@@ -219,36 +219,85 @@ def move(state):
     new_state = (m_x,m_y, tuple(b_x_new), tuple(b_y_new), food)
     return new_state
 
-def make_graph(g):
+def make_graph(g,state,flag=False):
     
-    grid_row = 5
-    grid_column = 5
+    grid_row = 6
+    grid_column = 6
     for r in range(grid_row):
         for c in range(grid_column):
             g.add_vertex((r,c))
    
-        
+    m_x, m_y, b_x, b_y, food = state
+    f_x, f_y = food_coords(food)
+    B1 =[]
+    B2=[]
+    for bx, by in zip(b_x, b_y):
+        B1.append(bx)
+        B2.append(by)
 
-    for r in range(grid_row+1):
-        for c in range(grid_column+1):
-                    
-            if (0<=(r+1)<=grid_row) and (0<=c<=grid_column):
+    print(B1)
+    print(B2)
+    p1,p2 = (B1[0],B2[0]),(B1[1],B2[1])
+
+    if flag == True:
+        
+        neww = set()
+        for p in [p1,p2]:
+            neww.add(p)
+            neww.add((p[0]+1,p[1]+1))
+            neww.add((p[0]+1,p[1]))
+            neww.add((p[0],p[1]+1))
+            neww.add((p[0]-1,p[1]+1))
+            neww.add((p[0]+1,p[1]-1))
+            neww.add((p[0],p[1]-1))
+            neww.add((p[0]-1,p[1]))
+            neww.add((p[0]-1,p[1]-1))
+        print(neww)
+    
+    
+        
+        
+        for r in range(grid_row):
+            for c in range(grid_column):
+                #g.add_edge((r,c),(r,c),0)
+                if (0<=(r+1)<=grid_row-1) and (0<=c<=grid_column-1) and (r+1,c) not in neww :
                     g.add_edge((r,c),(r+1,c),1)
-            if (0<=(r)<=grid_row) and (0<=(c+1)<=grid_column):
-                g.add_edge((r,c),(r,c+1),1)
-            if (0<=(r+1)<=grid_row) and (0<=(c+1)<=grid_column):
-                g.add_edge((r,c),(r+1,c+1),1)
-            if (0<=(r-1)<=grid_row) and (0<=(c)<=grid_column):
-                g.add_edge((r,c),(r-1,c),1)
-            if (0<=(r)<=grid_row) and (0<=(c-1)<=grid_column):
-                g.add_edge((r,c),(r,c-1),1)
-            if (0<=(r-1)<=grid_row) and (0<=(c-1)<=grid_column):
-                g.add_edge((r,c),(r-1,c-1),1)
-            if (0<=(r-1)<=grid_row) and (0<=(c+1)<=grid_column):
-                g.add_edge((r,c),(r-1,c+1),1)
-            if (0<=(r+1)<=grid_row) and (0<=(c-1)<=grid_column):
-                g.add_edge((r,c),(r+1,c-1),1)
-            
+                if (0<=(r)<=grid_row-1) and (0<=(c+1)<=grid_column-1) and (r,c+1) not in neww :
+                    g.add_edge((r,c),(r,c+1),1)
+                if (0<=(r+1)<=grid_row-1) and (0<=(c+1)<=grid_column-1) and (r+1,c+1) not in neww :
+                    g.add_edge((r,c),(r+1,c+1),1)
+                if (0<=(r-1)<=grid_row-1) and (0<=(c)<=grid_column-1) and (r-1,c) not in neww :
+                    g.add_edge((r,c),(r-1,c),1)
+                if (0<=(r)<=grid_row-1) and (0<=(c-1)<=grid_column-1) and (r,c-1) not in neww :
+                    g.add_edge((r,c),(r,c-1),1)
+                if (0<=(r-1)<=grid_row-1) and (0<=(c-1)<=grid_column-1) and (r-1,c-1) not in neww :
+                    g.add_edge((r,c),(r-1,c-1),1)
+                if (0<=(r-1)<=grid_row-1) and (0<=(c+1)<=grid_column-1) and (r-1,c+1) not in neww :
+                    g.add_edge((r,c),(r-1,c+1),1)
+                if (0<=(r+1)<=grid_row-1) and (0<=(c-1)<=grid_column-1) and (r+1,c-1) not in neww :
+                    g.add_edge((r,c),(r+1,c-1),1)   
+
+    else:
+        for r in range(grid_row):
+            for c in range(grid_column):
+                        
+                if (0<=(r+1)<=grid_row-1) and (0<=c<=grid_column-1):
+                        g.add_edge((r,c),(r+1,c),1)
+                if (0<=(r)<=grid_row-1) and (0<=(c+1)<=grid_column-1):
+                    g.add_edge((r,c),(r,c+1),1)
+                if (0<=(r+1)<=grid_row-1) and (0<=(c+1)<=grid_column-1):
+                    g.add_edge((r,c),(r+1,c+1),1)
+                if (0<=(r-1)<=grid_row-1) and (0<=(c)<=grid_column-1):
+                    g.add_edge((r,c),(r-1,c),1)
+                if (0<=(r)<=grid_row-1) and (0<=(c-1)<=grid_column-1):
+                    g.add_edge((r,c),(r,c-1),1)
+                if (0<=(r-1)<=grid_row-1) and (0<=(c-1)<=grid_column-1):
+                    g.add_edge((r,c),(r-1,c-1),1)
+                if (0<=(r-1)<=grid_row-1) and (0<=(c+1)<=grid_column-1):
+                    g.add_edge((r,c),(r-1,c+1),1)
+                if (0<=(r+1)<=grid_row-1) and (0<=(c-1)<=grid_column-1):
+                    g.add_edge((r,c),(r+1,c-1),1)
+                
     
 
 def Hand_Coded_Policy(state,selfish=1,empathy=-1):
@@ -256,9 +305,11 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
     f_x, f_y = food_coords(food)
     if selfish > 0:
         if empathy < 0 or empathy ==0:
+            
             for fx, fy in zip(f_x, f_y):
                 g = Graph()
-                make_graph(g)
+                flag = True
+                make_graph(g,state,flag)
                 dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((fx,fy))) 
                 target = g.get_vertex((fx,fy))
                 path = [target.get_id()]
@@ -673,7 +724,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
 if __name__ == "__main__":
     
     
-   
+
     
 #    for v in g:
 #        for w in v.get_connections():
@@ -681,7 +732,7 @@ if __name__ == "__main__":
 #            wid = w.get_id()
 #            print( '() %s , %s, %3d)'  % ( vid, wid, v.get_weight(w)))
 
-    state = (1, 0, (0, 0), (5, 5), (False, False,True, False))
+    state = (1, 0, (0, 0), (5,5), (False, False,True, False))
     #state = (5, 0, (0, 0), (5, 5), (False, False,True, False))
     #state = (0, 0, (0, 0), (5, 5), (False, False, True, False))
     # state = (0, 0, (0, 0), (0, 0), (False, False, False, True))
@@ -693,4 +744,4 @@ if __name__ == "__main__":
     f_x, f_y = food_coords(food)
    
 # Var selfish and empathy value from -1 to 1
-    Hand_Coded_Policy(state,selfish =-1,empathy = 1)
+    Hand_Coded_Policy(state,selfish =1,empathy = -1)
