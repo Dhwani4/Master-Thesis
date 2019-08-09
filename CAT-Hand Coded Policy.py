@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug  8 15:08:48 2019
 
-@author: Dhwani
-"""
 import numpy as np
 import matplotlib.pyplot as pt
 grid_cols = 6 # size of grid world
