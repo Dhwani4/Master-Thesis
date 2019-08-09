@@ -362,9 +362,9 @@ if __name__ == "__main__":
     #     assert(idx == state_to_index(index_to_state(idx)))
 
     #### !!! Do this once to build P tables and save to disk !!! ###
-#    P = build_mdp()
-#    for dx,dy in P:
-#       sp.save_npz("P_%d_%d.npz" % (dx,dy), P[dx,dy])
+    P = build_mdp()
+    for dx,dy in P:
+        sp.save_npz("P_%d_%d.npz" % (dx,dy), P[dx,dy])
 
    # Load P tables from disk, after previous code has been executed once.
     P = {(dx,dy): sp.load_npz("P_%d_%d.npz" % (dx,dy))
