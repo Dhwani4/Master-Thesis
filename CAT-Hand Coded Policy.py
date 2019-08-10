@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug  8 15:08:48 2019
-
-@author: Dhwani
-"""
+# Calling Dijksra's algorithm to find shortest path using the code from https://www.bogotobogo.com/python/python_Dijkstras_Shortest_Path_Algorithm.php
 import numpy as np
 import heapq
 import matplotlib.pyplot as pt
