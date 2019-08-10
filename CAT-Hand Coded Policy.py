@@ -143,7 +143,7 @@ def shortest(v, path):
 
 
 def dijkstra(aGraph, start, target):
-    print ('''Dijkstra's shortest path''')
+    #print ('''Dijkstra's shortest path''')
     # Set the distance for the start node to zero 
     start.set_distance(0)
     unvisited_queue = [(v.get_distance(),v) for v in aGraph]
