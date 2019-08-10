@@ -590,7 +590,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                             m_y_new = m_y_new-1
                         else:
                             m_y_new = 0
-                        state = m_x_new,m_y_new,b_x_new,b_y_new,
+                        state = m_x_new,m_y_new,b_x_new,b_y_new,food
                         if t+a > 12:
                             break
                         pt.pause(10.)
