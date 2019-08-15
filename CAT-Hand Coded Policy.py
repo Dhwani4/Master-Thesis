@@ -292,8 +292,246 @@ def make_graph(g,state,flag=False):
                     g.add_edge((r,c),(r-1,c+1),1)
                 if (0<=(r+1)<=grid_row-1) and (0<=(c-1)<=grid_column-1):
                     g.add_edge((r,c),(r+1,c-1),1)
-                
+
+#def path_1(state,mx_new,my_new):
+#    
+#    
+#    a = len(mx_new)
+#    print(a)
+#    m_x, m_y, b_x, b_y, food = state           
+def path_1(state,mx_new,my_new):
     
+    
+    a = len(mx_new)
+    print(a)
+    m_x, m_y, b_x, b_y, food=state
+    f_x, f_y = food_coords(food)            
+                    
+    
+    for t in range(a):
+            print(t)
+            if (t < len(mx_new)):
+                
+                b_x_new =[]
+                b_y_new=[]
+                state1 = (mx_new[t],my_new[t],b_x,b_y,food)
+                mx,my,b_x,b_y, food= state1
+                
+                for bx, by in zip(b_x, b_y):
+                    food_step = False
+                    for fx, fy in zip(f_x, f_y):
+    
+                        if max(abs(fx-bx), abs(fy-by)) <= baby_view:
+                            food_step = True  
+                            b_x_new.append(bx + np.sign(fx-bx))
+                            b_y_new.append(by + np.sign(fy-by))
+                            break
+                    if food_step: continue
+                    if max(abs(mx-bx), abs(my-by)) <= baby_view:
+                        #print("*")
+                        print("oops")
+                        b_x_new.append(bx + np.sign(mx-bx))
+                        b_y_new.append(by + np.sign(my-by))
+                        continue
+                    b_x_new.append(bx)
+                    b_y_new.append(by)
+                    
+                print(b_x_new,b_y_new)
+                if (t < len(mx_new)-1):
+                    state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
+                    plot_state(state)
+                    pt.pause(10.)
+                
+            
+                
+                
+           # pt.pause(10.)
+        
+    m_x, m_y, b_x, b_y, food = state           
+    f_x, f_y = food_coords(food)            
+    #print("hi")       
+    #print(m_x,m_y) 
+    #for fx, fy in zip(f_x, f_y):
+    f = Graph()
+    make_graph(f,state)
+    for fx, fy in zip(f_x, f_y):
+        food_1 = True
+        #print("hello")
+        dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((fx,fy))) 
+        target = f.get_vertex((fx,fy))
+        path1 = [target.get_id()]
+        shortest(target, path1)
+        D= (path1[::-1])
+        mx_new=[]
+        my_new=[]
+        for i in range(len(D)):
+            mx_new.append(D[i][0])
+            my_new.append(D[i][1])
+        #print(mx_new,my_new)
+        for t in range(12):
+            #print(t+a)
+            
+            if (t < len(mx_new)):
+                
+                b_x_new =[]
+                b_y_new=[]
+                state1 = (mx_new[t],my_new[t],b_x,b_y,food)
+                mx,my,b_x,b_y, food= state
+                
+                for bx, by in zip(b_x, b_y):
+                    #print("there")
+                    food_step = False
+
+                    for fx, fy in zip(f_x, f_y):
+    
+                        if max(abs(fx-bx), abs(fy-by)) <= baby_view:
+                            food_step = True  
+                            b_x_new.append(bx + np.sign(fx-bx))
+                            b_y_new.append(by + np.sign(fy-by))
+                            #print("here")
+                            #print(b_x_new)
+                            #print(b_y_new)
+                            break
+
+                    if food_step: continue
+                    if max(abs(mx-bx), abs(my-by)) <= baby_view:
+                        #print("*")
+                        b_x_new.append(bx + np.sign(mx-bx))
+                        b_y_new.append(by + np.sign(my-by))
+                        continue
+                    #print(bx)
+                    b_x_new.append(bx)
+                    #print(by)
+                
+                    b_y_new.append(by)
+                #print(b_x_new)
+                #print(b_y_new)
+                if (t < len(mx_new)-1):
+                    state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
+                    plot_state(state)
+                    pt.pause(10.)
+                else:
+                    
+                    state =(mx_new[t],my_new[t],tuple(b_x_new),tuple(b_y_new),food)
+                    #state = move(state)
+
+                    plot_state(state)
+                    pt.pause(10.)
+                
+                    pt.show()
+        if food_1 : break
+        
+    return state
+
+def path_2(state,mx_new,my_new):
+    a = len(mx_new)
+            #prin(a)
+    b_x_new=[]
+    b_y_new=[]
+    m_x, m_y, b_x, b_y, food=state
+    f_x, f_y = food_coords(food)          
+    for t in range(a):
+        #print(t)
+        if (t < len(mx_new)):
+            
+            b_x_new =[]
+            b_y_new=[]
+            state1 = (mx_new[t],my_new[t],b_x,b_y,food)
+            mx,my,b_x,b_y, food= state1
+            
+            for bx, by in zip(b_x, b_y):
+                food_step = False
+                for fx, fy in zip(f_x, f_y):
+    
+                    if max(abs(fx-bx), abs(fy-by)) <= baby_view:
+                        food_step = True  
+                        b_x_new.append(bx + np.sign(fx-bx))
+                        b_y_new.append(by + np.sign(fy-by))
+                        break
+                if food_step: continue
+                if max(abs(mx-bx), abs(my-by)) <= baby_view:
+                    #print("*")
+                    #print("oops")
+                    b_x_new.append(bx + np.sign(mx-bx))
+                    b_y_new.append(by + np.sign(my-by))
+                    continue
+                b_x_new.append(bx)
+                b_y_new.append(by)
+                
+            #print(b_x_new,b_y_new)
+            if (t < len(mx_new)-1):
+                state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
+                plot_state(state)
+                pt.pause(10.)
+            
+    m_x, m_y, b_x, b_y, food = state           
+    f_x, f_y = food_coords(food)            
+            
+    #print(m_x,m_y) 
+    #for fx, fy in zip(f_x, f_y):
+    f = Graph()
+    make_graph(f,state)
+    for fx, fy in zip(f_x, f_y):
+        food_1 = True
+        dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((fx,fy))) 
+        target = f.get_vertex((fx,fy))
+        path1 = [target.get_id()]
+        shortest(target, path1)
+        D= (path1[::-1])
+        D.pop()
+        mx_new=[]
+        my_new=[]
+        for i in range(len(D)):
+            mx_new.append(D[i][0])
+            my_new.append(D[i][1])
+        
+        for t in range(12):
+            #print(t+a)
+            
+            if (t < len(mx_new)):
+                
+                b_x_new =[]
+                b_y_new=[]
+                state1 = (mx_new[t],my_new[t],b_x,b_y,food)
+                mx,my,b_x,b_y, food= state
+                for bx, by in zip(b_x, b_y):
+                    food_step = False
+                    for fx, fy in zip(f_x, f_y):
+        
+                        if max(abs(fx-bx), abs(fy-by)) <= baby_view:
+                            food_step = True  
+                            b_x_new.append(bx + np.sign(fx-bx))
+                            b_y_new.append(by + np.sign(fy-by))
+                            break
+                    if food_step: continue
+                    if max(abs(mx-bx), abs(my-by)) <= baby_view:
+                        #print("*")
+                        #print("oops")
+                        b_x_new.append(bx + np.sign(mx-bx))
+                        b_y_new.append(by + np.sign(my-by))
+                        continue
+                    b_x_new.append(bx)
+                    b_y_new.append(by)
+                
+                if (t < len(mx_new)-1):
+                    state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
+                    plot_state(state)
+                    pt.pause(10.)
+                else:
+                    
+                    state =(mx_new[t]-1,my_new[t]-1,tuple(b_x_new),tuple(b_y_new),food)
+                    m_x,m_y,b_x_new,b_y_new,food = state1
+                    pt.pause(10.)
+                    plot_state(state)
+                
+                    pt.show()
+                    m_x_new = mx_new[t]-1
+                    m_y_new = my_new[t]-1
+            
+                
+        if food_1:break
+    return state
+                     
 
 def Hand_Coded_Policy(state,selfish=1,empathy=-1):
     m_x, m_y, b_x, b_y, food = state
@@ -324,7 +562,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                         
                         state = (mx_new[t],my_new[t],b_x,b_y,food)
                         
-                    print(t)
+                    #print(t)
                     plot_state(state)
                     pt.show()
                     pt.pause(10.)
@@ -339,6 +577,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                 B1.append(bx)
                 B2.append(by)
             #print(B1,B2)
+            
             g = Graph()
             make_graph(g,state)
             dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[1],B2[1]))) 
@@ -347,121 +586,72 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             shortest(target, path)
             A= (path[::-1])
             A.pop()
-            mx_new = []
-            my_new = []
-            for i in range(len(A)):
-                mx_new.append(A[i][0])
-                my_new.append(A[i][1])
-            #print(mx_new,my_new)
-            
-            a = len(mx_new)
-            c = a
-            
-            
-            for t in range(a):
-                    print(t)
-                    if (t < len(mx_new)):
-                        
-                        b_x_new =[]
-                        b_y_new=[]
-                        state1 = (mx_new[t],my_new[t],b_x,b_y,food)
-                        mx,my,b_x,b_y, food= state1
-                        food_step = False
-                        for bx, by in zip(b_x, b_y):
-                            for fx, fy in zip(f_x, f_y):
-            
-                                if max(abs(fx-bx), abs(fy-by)) <= baby_view:
-                                    food_step = True  
-                                    b_x_new.append(bx + np.sign(fx-bx))
-                                    b_y_new.append(by + np.sign(fy-by))
-                                    break
-                            if food_step: continue
-                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                #print("*")
-                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
-                                b_y_new.append(by + np.sign(my_new[t]-by))
-                                continue
-                            b_x_new.append(bx)
-                            b_y_new.append(by)
-                            
-                        #print(b_x_new,b_y_new)
-                        if (t < len(mx_new)-1):
-                            state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
-                            plot_state(state)
-                            pt.pause(10.)
-                        
-                    
-                        
-                        
-                   # pt.pause(10.)
+            #print(len(A))
+            dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[0],B2[0]))) 
+            target = g.get_vertex((B1[0],B2[0]))
+            path = [target.get_id()]
+            shortest(target, path)
+            B= (path[::-1])
+            B.pop()
+            #print(len(B))
+            a = len(A)
+            b= len(B)
+            #print(B)
+            if a<=b:
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                c = path_1(state,mx_new,my_new)
+                m_x, m_y, b_x, b_y, food = c
                 
-            m_x, m_y, b_x, b_y, food = state           
-            f_x, f_y = food_coords(food)            
-                    
-            #print(m_x,m_y) 
-            #for fx, fy in zip(f_x, f_y):
-            f = Graph()
-            make_graph(f,state)
-            for fx, fy in zip(f_x, f_y):
-                food_1 = True
-                dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((fx,fy))) 
-                target = f.get_vertex((fx,fy))
-                path1 = [target.get_id()]
-                shortest(target, path1)
-                D= (path1[::-1])
-                mx_new=[]
-                my_new=[]
-                for i in range(len(D)):
-                    mx_new.append(D[i][0])
-                    my_new.append(D[i][1])
-                #print(mx_new,my_new)
-                for t in range(12):
-                    print(t+a)
-                    
-                    if (t < len(mx_new)):
-                        
-                        b_x_new =[]
-                        b_y_new=[]
-                        state1 = (mx_new[t],my_new[t],b_x,b_y,food)
-                        mx,my,b_x,b_y, food= state
-                        
-                        for bx, by in zip(b_x, b_y):
-                            for fx, fy in zip(f_x, f_y):
-            
-                                if max(abs(fx-bx), abs(fy-by)) <= baby_view:
-                                    food_step = True  
-                                    b_x_new.append(bx + np.sign(fx-bx))
-                                    b_y_new.append(by + np.sign(fy-by))
-                                    break
-                            if food_step: continue
-                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                #print("*")
-                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
-                                b_y_new.append(by + np.sign(my_new[t]-by))
-                                continue
-                            b_x_new.append(bx)
-                            b_y_new.append(by)
-                        #print(b_x_new)
-                        #print(b_y_new)
-                        if (t < len(mx_new)-1):
-                            state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
-                            plot_state(state)
-                            pt.pause(10.)
-                        else:
-                            
-                            state =(mx_new[t],my_new[t],tuple(b_x_new),tuple(b_y_new),food)
-                            plot_state(state)
-                            state = move(state)
-                            pt.pause(10.)
-                            plot_state(state)
-                        
-                            pt.show()
-                    else:
-                        if t+a > 12:
-                            break
-                        plot_state(state)
-                        pt.show()
-                if food_1:break
+                dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[0],B2[0]))) 
+                target = g.get_vertex((B1[0],B2[0]))
+                path = [target.get_id()]
+                shortest(target, path)
+                A= (path[::-1])
+                A.pop()
+                a = len(A)
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                s
+                c = path_1(state,mx_new,my_new)
+            else:
+                mx_new = []
+                my_new = []
+                for i in range(len(B)):
+                    mx_new.append(B[i][0])
+                    my_new.append(B[i][1])
+                #print(mx_new)
+                #print(my_new)
+                
+                c1=path_1(state,mx_new,my_new)
+                m_x, m_y, b_x, b_y, food = c1
+                #print(m_x)
+                #print(m_y)
+                h = Graph()
+                make_graph(h,c1)
+                dijkstra(h, h.get_vertex((m_x,m_y)), h.get_vertex((B1[1],B2[1]))) 
+                target = h.get_vertex((B1[1],B2[1]))
+                path = [target.get_id()]
+                shortest(target, path)
+                A= (path[::-1])
+                A.pop()
+               # print(A)
+                a = len(A)
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                c = path_1(c1,mx_new,my_new)
+                
+                
+                                            
                         
                         
 
@@ -477,7 +667,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
     
             for t in range(12):
 
-                print(t+1)
+                #print(t+1)
                 state = move(state)
 
                 plot_state(state)
@@ -492,6 +682,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                 B1.append(bx)
                 B2.append(by)
             #print(B1,B2)
+            
             g = Graph()
             make_graph(g,state)
             dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[1],B2[1]))) 
@@ -500,104 +691,115 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             shortest(target, path)
             A= (path[::-1])
             A.pop()
-            mx_new = []
-            my_new = []
-            for i in range(len(A)):
-                mx_new.append(A[i][0])
-                my_new.append(A[i][1])
-            
-            a = len(mx_new)
-            #prin(a)
-            
-            for t in range(a):
-                    print(t)
-                    state = (mx_new[t],my_new[t],b_x,b_y,food)
+            #print(len(A))
+            dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[0],B2[0]))) 
+            target = g.get_vertex((B1[0],B2[0]))
+            path = [target.get_id()]
+            shortest(target, path)
+            B= (path[::-1])
+            B.pop()
+            #print(len(B))
+            a = len(A)
+            b= len(B)
+            #print(B)
+            if a<=b:
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                c1 = path_2(state,mx_new,my_new)
+                m_x, m_y, b_x, b_y, food = c1
+                
+                dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[0],B2[0]))) 
+                target = g.get_vertex((B1[0],B2[0]))
+                path = [target.get_id()]
+                shortest(target, path)
+                A= (path[::-1])
+                A.pop()
+                a = len(A)
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                
+                c = path_2(c1,mx_new,my_new)
+            else:
+                mx_new = []
+                my_new = []
+                for i in range(len(B)):
+                    mx_new.append(B[i][0])
+                    my_new.append(B[i][1])
+                #print(mx_new)
+                #print(my_new)
+                
+                c1=path_2(state,mx_new,my_new)
+                m_x, m_y, b_x, b_y, food = c1
+                #print(m_x)
+                #print(m_y)
+                h = Graph()
+                make_graph(h,c1)
+                dijkstra(h, h.get_vertex((m_x,m_y)), h.get_vertex((B1[1],B2[1]))) 
+                target = h.get_vertex((B1[1],B2[1]))
+                path = [target.get_id()]
+                shortest(target, path)
+                A= (path[::-1])
+                A.pop()
+                #print(A)
+                a = len(A)
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                c = path_2(c1,mx_new,my_new)
+                mx,my,b_x,b_y,food = c
+                b_x_new =[]
+                b_y_new=[]
+                for bx, by in zip(b_x, b_y):
+                    food_step = False
+                    for fx, fy in zip(f_x, f_y):
+        
+                        if max(abs(fx-bx), abs(fy-by)) <= baby_view:
+                            food_step = True  
+                            b_x_new.append(bx + np.sign(fx-bx))
+                            b_y_new.append(by + np.sign(fy-by))
+                            break
+                    if food_step: continue
+                    if max(abs(mx-bx), abs(my-by)) <= baby_view:
+                        #print("*")
+                        #print("oops")
+                        b_x_new.append(bx + np.sign(mx-bx))
+                        b_y_new.append(by + np.sign(my-by))
+                        continue
+                    b_x_new.append(bx)
+                    b_y_new.append(by)
+                state = mx,my,tuple(b_x_new),tuple(b_y_new),food
+#                pt.show()
+                t=0
+                while my > 0 or mx >0:
+                    
+                    t=t+1
+                    if mx >0:
+                        mx= mx-1 
+                    else:
+                        mx =0
+                    if my >0:
+                        my = my-1
+                    else:
+                        my = 0
+                    state = mx,my,b_x_new,b_y_new,food
+                    if t >5:
+                        break
+                    
+                    pt.pause(10.)
                     plot_state(state)
                     pt.show()
-                    pt.pause(10.)
-                
-            m_x, m_y, b_x, b_y, food = state           
-            f_x, f_y = food_coords(food)            
-                    
-            #print(m_x,m_y) 
-            #for fx, fy in zip(f_x, f_y):
-            f = Graph()
-            make_graph(f,state)
-            for fx, fy in zip(f_x, f_y):
-                food_1 = True
-                dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((fx,fy))) 
-                target = f.get_vertex((fx,fy))
-                path1 = [target.get_id()]
-                shortest(target, path1)
-                D= (path1[::-1])
-                D.pop()
-                mx_new=[]
-                my_new=[]
-                for i in range(len(D)):
-                    mx_new.append(D[i][0])
-                    my_new.append(D[i][1])
-                
-                for t in range(12):
-                    print(t+a)
-                    
-                    if (t < len(mx_new)):
-                        
-                        b_x_new =[]
-                        b_y_new=[]
-                        state1 = (mx_new[t],my_new[t],b_x,b_y,food)
-                        mx,my,b_x,b_y, food= state
-                        food_step = False
-                        for bx, by in zip(b_x, b_y):
-                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                food_step = True
-                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
-                                b_y_new.append(by + np.sign(my_new[t]-by))
-                                
-                                break
-                            if food_step: continue
-                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                #print("*")
-                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
-                                b_y_new.append(by + np.sign(my_new[t]-by))
-                                continue
-                            #b_x_new.append(bx)
-                            #b_y_new.append(by)
-                        #print(b_x_new)
-                        #print(b_y_new)
-                        
-                        if (t < len(mx_new)-1):
-                            state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
-                            plot_state(state)
-                            pt.pause(10.)
-                        else:
-                            
-                            state =(mx_new[t]-1,my_new[t]-1,tuple(b_x_new),tuple(b_y_new),food)
-                            state1 = move(state)
-                            m_x,m_y,b_x_new,b_y_new,food = state1
-                            pt.pause(10.)
-                            plot_state(state1)
-                        
-                            pt.show()
-                            m_x_new = mx_new[t]-1
-                            m_y_new = my_new[t]-1
-                    else:
-                        m_x,m_y,b_x_new,b_y_new,food = state1
-                        if m_x_new >0:
-                            m_x_new= m_x_new-1 
-                        else:
-                            m_x_new =0
-                        if m_y_new >0:
-                            m_y_new = m_y_new-1
-                        else:
-                            m_y_new = 0
-                        state = m_x_new,m_y_new,b_x_new,b_y_new,food
-                        if t+a > 12:
-                            break
-                        pt.pause(10.)
-                        plot_state(state)
-                        pt.show()
-                if food_1:break
-                        
+#            
+            
+            
+            
                 
 #		call Dijkstra’s algorithm with robot as source and subject1/subject 2 as destination
 #		call Dijkstra’s algorithm with robot as source and food as destination
@@ -626,6 +828,7 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
                 B1.append(bx)
                 B2.append(by)
             #print(B1,B2)
+            
             g = Graph()
             make_graph(g,state)
             dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[1],B2[1]))) 
@@ -634,105 +837,111 @@ def Hand_Coded_Policy(state,selfish=1,empathy=-1):
             shortest(target, path)
             A= (path[::-1])
             A.pop()
-            #print(A)
-            mx_new = []
-            my_new = []
-            for i in range(len(A)):
-                mx_new.append(A[i][0])
-                my_new.append(A[i][1])
-            
-            a = len(mx_new)
-            
-            for t in range(a):
-                    print(t)
-                    state = (mx_new[t],my_new[t],b_x,b_y,food)
+            #print(len(A))
+            dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[0],B2[0]))) 
+            target = g.get_vertex((B1[0],B2[0]))
+            path = [target.get_id()]
+            shortest(target, path)
+            B= (path[::-1])
+            B.pop()
+            #print(len(B))
+            a = len(A)
+            b= len(B)
+            #print(B)
+            if a<=b:
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                c1 = path_2(state,mx_new,my_new)
+                m_x, m_y, b_x, b_y, food = c1
+                
+                dijkstra(g, g.get_vertex((m_x,m_y)), g.get_vertex((B1[0],B2[0]))) 
+                target = g.get_vertex((B1[0],B2[0]))
+                path = [target.get_id()]
+                shortest(target, path)
+                A= (path[::-1])
+                A.pop()
+                a = len(A)
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                
+                c = path_2(c1,mx_new,my_new)
+            else:
+                mx_new = []
+                my_new = []
+                for i in range(len(B)):
+                    mx_new.append(B[i][0])
+                    my_new.append(B[i][1])
+                #print(mx_new)
+                #print(my_new)
+                
+                c1=path_2(state,mx_new,my_new)
+                m_x, m_y, b_x, b_y, food = c1
+                #print(m_x)
+                #print(m_y)
+                h = Graph()
+                make_graph(h,c1)
+                dijkstra(h, h.get_vertex((m_x,m_y)), h.get_vertex((B1[1],B2[1]))) 
+                target = h.get_vertex((B1[1],B2[1]))
+                path = [target.get_id()]
+                shortest(target, path)
+                A= (path[::-1])
+                A.pop()
+                #print(A)
+                a = len(A)
+                mx_new = []
+                my_new = []
+                for i in range(len(A)):
+                    mx_new.append(A[i][0])
+                    my_new.append(A[i][1])
+                c = path_2(c1,mx_new,my_new)
+                mx,my,b_x,b_y,food = c
+                b_x_new =[]
+                b_y_new=[]
+                for bx, by in zip(b_x, b_y):
+                    food_step = False
+                    for fx, fy in zip(f_x, f_y):
+        
+                        if max(abs(fx-bx), abs(fy-by)) <= baby_view:
+                            food_step = True  
+                            b_x_new.append(bx + np.sign(fx-bx))
+                            b_y_new.append(by + np.sign(fy-by))
+                            break
+                    if food_step: continue
+                    if max(abs(mx-bx), abs(my-by)) <= baby_view:
+                        #print("*")
+                        #print("oops")
+                        b_x_new.append(bx + np.sign(mx-bx))
+                        b_y_new.append(by + np.sign(my-by))
+                        continue
+                    b_x_new.append(bx)
+                    b_y_new.append(by)
+                state = mx,my,tuple(b_x_new),tuple(b_y_new),food
+#                pt.show()
+                t=0
+                while my > 0 or mx >0:
+                    
+                    t=t+1
+                    if mx >0:
+                        mx= mx-1 
+                    else:
+                        mx =0
+                    if my >0:
+                        my = my-1
+                    else:
+                        my = 0
+                    state = mx,my,b_x_new,b_y_new,food
+                    if t >5:
+                        break
+                    
+                    pt.pause(10.)
                     plot_state(state)
                     pt.show()
-                    pt.pause(10.)
-                
-            m_x, m_y, b_x, b_y, food = state           
-            f_x, f_y = food_coords(food)            
-                    
-            #print(m_x,m_y) 
-            #for fx, fy in zip(f_x, f_y):
-            f = Graph()
-            make_graph(f,state)
-            for fx, fy in zip(f_x, f_y):
-
-                food_1 = True
-                dijkstra(f, f.get_vertex((m_x,m_y)), f.get_vertex((fx,fy))) 
-                target = f.get_vertex((fx,fy))
-                path1 = [target.get_id()]
-                shortest(target, path1)
-                D= (path1[::-1])
-                D.pop()
-                mx_new=[]
-                my_new=[]
-                for i in range(len(D)):
-                    mx_new.append(D[i][0])
-                    my_new.append(D[i][1])
-                for t in range(12):
-                    print(t+a)
-                    
-                    if (t < len(mx_new)):
-                    
-                        
-                        b_x_new =[]
-                        b_y_new=[]
-                        state1 = (mx_new[t],my_new[t],b_x,b_y,food)
-                        mx,my,b_x,b_y, food= state
-                        food_step = False
-                        for bx, by in zip(b_x, b_y):
-                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                food_step = True
-                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
-                                b_y_new.append(by + np.sign(my_new[t]-by))
-                                
-                                break
-                            if food_step: continue
-                            if max(abs(mx_new[t]-bx), abs(my_new[t]-by)) <= baby_view:
-                                #print("*")
-                                b_x_new.append(bx + np.sign(mx_new[t]-bx))
-                                b_y_new.append(by + np.sign(my_new[t]-by))
-                                continue
-                            #b_x_new.append(bx)
-                            #b_y_new.append(by)
-                        
-                        
-                        if (t < len(mx_new)-1):
-                            state = (mx_new[t+1],my_new[t+1],tuple(b_x_new),tuple(b_y_new),food)
-                            plot_state(state)
-                            pt.pause(10.)
-                        else:
-                            
-                            state =(mx_new[t]-1,my_new[t]-1,tuple(b_x_new),tuple(b_y_new),food)
-                    
-                            state1 = move(state)
-                            m_x,m_y,b_x_new,b_y_new,food = state1
-                            pt.pause(10.)
-                            plot_state(state1)
-                        
-                            pt.show()
-                            m_x_new = mx_new[t]-1
-                            m_y_new = my_new[t]-1
-                    else:
-                        m_x,m_y,b_x_new,b_y_new,food = state1
-                        if m_x_new >0:
-                            m_x_new= m_x_new-1 
-                        else:
-                            m_x_new =0
-                        if m_y_new >0:
-                            m_y_new = m_y_new-1
-                        else:
-                            m_y_new = 0
-                        if t+a >12:
-                            break
-                        state = m_x_new,m_y_new,b_x_new,b_y_new,food
-                        pt.pause(10.)
-                        plot_state(state)
-                        pt.show()
-                        
-                if food_1:break
                         
 
 #		call Dijkstra’s algorithm with robot as source and subject1/subject 2 as destination
@@ -757,7 +966,7 @@ if __name__ == "__main__":
 #            wid = w.get_id()
 #            print( '() %s , %s, %3d)'  % ( vid, wid, v.get_weight(w)))
 
-    state = (1, 0, (0, 0), (5,5), (False, False,True, False))
+    state = (1, 0, (0, 0), (4,5), (False, False,True, False))
     #state = (5, 0, (0, 0), (5, 5), (False, False,True, False))
     #state = (0, 0, (0, 0), (5, 5), (False, False, True, False))
     # state = (0, 0, (0, 0), (0, 0), (False, False, False, True))
@@ -769,4 +978,4 @@ if __name__ == "__main__":
     f_x, f_y = food_coords(food)
    
 # Var selfish and empathy value from -1 to 1
-    Hand_Coded_Policy(state,selfish =-1,empathy = 1)
+    Hand_Coded_Policy(state,selfish =1,empathy = 1)
